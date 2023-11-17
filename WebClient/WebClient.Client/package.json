@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.3.5"
+  },
+  "scripts": {
+    "style:build": "npx tailwindcss -i ./wwwroot/client-basestyles.css -o ./wwwroot/client-styles.css --watch"
+  }
+}
+

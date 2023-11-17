@@ -1,0 +1,17 @@
+﻿@page "/shop"
+
+<h3>Shop</h3>
+<ul>
+    <li>Type: @Type</li>
+    <li>Category: @Category</li>
+</ul>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "type")]
+    public string? Type { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Category { get; set; }
+}

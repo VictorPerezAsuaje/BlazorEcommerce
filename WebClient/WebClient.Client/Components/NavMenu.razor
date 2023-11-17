@@ -1,0 +1,222 @@
+﻿@rendermode InteractiveAuto
+
+<nav class="bg-white border-gray-200 fixed top-0 w-full z-30 shadow-lg">
+    <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen py-6 px-8">
+        <a href="/" class="flex items-center space-x-3 " @onclick="CloseMegaMenu">
+            <img src="/img/plants-logo.png" class="h-14" alt="Victor Pérez Asuaje Logo" />
+        </a>
+        <button data-collapse-toggle="mega-menu-full" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200   " aria-controls="mega-menu-full" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+            </svg>
+        </button>
+        <div id="mega-menu-full" class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1">
+            <ul class="flex flex-col mt-4 font-medium md:flex-row md:mt-0 md:space-x-8 text-lg">
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0 @(ActiveMegaMenu?.Name == "plants" ? "text-zuccini-600" : "text-gray-900")" @onclick="@(() => ToggleMegaMenu("plants"))">
+                        Plants
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0 @(ActiveMegaMenu?.Name == "bulbs" ? "text-zuccini-600" : "text-gray-900")" @onclick="@(() => ToggleMegaMenu("bulbs"))">
+                        Bulbs
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0 @(ActiveMegaMenu?.Name == "seeds" ? "text-zuccini-600" : "text-gray-900")" @onclick="@(() => ToggleMegaMenu("seeds"))">
+                        Seeds
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0 @(ActiveMegaMenu?.Name == "materials" ? "text-zuccini-600" : "text-gray-900")" @onclick="@(() => ToggleMegaMenu("materials"))">
+                        Materials
+                    </button>
+                </li>
+                <li>
+                    <button class="flex items-center justify-between w-full py-2 px-3 font-medium border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-600 md:p-0 @(ActiveMegaMenu?.Name == "tools" ? "text-zuccini-600" : "text-gray-900")" @onclick="@(() => ToggleMegaMenu("tools"))">
+                        Tools
+                    </button>
+                </li>
+                <li>
+                    <a href="/blog" class="block py-2 px-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-zuccini-700 md:p-0  ">Blog</a>
+                </li>
+            </ul>
+        </div>
+        <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-2 gap-3">
+            <a href="/login" class="text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center">
+                <i class="fa fa-sign-in"></i>
+            </a>
+            <button class="text-zuccini-700 hover:text-zuccini-800 hover:bg-gray-50 focus:ring-zuccini-300 focus:ring-4 text-lg px-2.5 aspect-square rounded-full my-auto flex items-center justify-center">
+                <i class="fa fa-cart-shopping"></i>
+            </button>
+        </div>
+    </div>
+
+    @foreach (var menu in AvailableMegaMenus)
+    {
+        <div class="mt-1 bg-white border-gray-200 border-y" hidden="@(ActiveMegaMenu?.Name != menu.Name)">
+            <ul class="grid max-w-screen-xl px-4 py-5 mx-auto text-gray-900 sm:grid-cols-2 md:grid-cols-3 md:px-6">
+                @if (menu is null)
+                {
+                     return;
+                }
+
+                @foreach (var item in menu.Items)
+                {
+                    <li>
+                        <NavLink href="@item.GenerateLink(menu.Name)" class="block p-3 rounded-lg hover:bg-gray-50" @onclick="CloseMegaMenu">
+                            <div class="font-semibold">@item.Title</div>
+                            <span class="text-sm text-gray-500 ">@item.Description</span>
+                        </NavLink>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+</nav>
+
+@code{
+    class MegaMenuItem
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+
+        public string GenerateLink(string type)
+            => $"shop?type={type}&category={Title}";
+    }
+
+    class MegaMenu
+    {
+        public string Name { get; set; }
+        public List<MegaMenuItem> Items { get; set; } = [];
+    }
+
+    private MegaMenu? ActiveMegaMenu;
+    private List<MegaMenu> AvailableMegaMenus = new List<MegaMenu>
+        {
+            new MegaMenu
+            {
+                Name = "plants",
+                Items = new List<MegaMenuItem>
+                {
+                    new MegaMenuItem
+                    {
+                        Title = "Perennials",
+                        Description = "Explore our collection of perennial plants that come back year after year, adding beauty to your garden effortlessly.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Roses",
+                        Description = "Discover the elegance and fragrance of our rose varieties, perfect for gardens, bouquets, and special occasions.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Climbers",
+                        Description = "Find climbing plants that bring vertical interest to your garden, creating stunning natural backdrops.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Indoor",
+                        Description = "Enhance your indoor spaces with our selection of houseplants, bringing greenery and freshness to your home.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Outdoor",
+                        Description = "Elevate your outdoor areas with our outdoor plant options, making your garden or patio more inviting and beautiful.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Bedding",
+                        Description = "Create cozy and colorful garden beds with our bedding plants, transforming your outdoor space.",
+                        Url = "/shop"
+                    }
+                }
+            },
+            new MegaMenu
+            {
+                Name = "bulbs",
+                Items = new List<MegaMenuItem>
+                {
+                    new MegaMenuItem
+                    {
+                        Title = "Tulips",
+                        Description = "Brighten your garden with vibrant tulip varieties, adding a burst of color and charm in the spring.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Daffodils",
+                        Description = "Welcome spring with the cheerful blooms of daffodils, a classic and beloved flower for your garden.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Alliums",
+                        Description = "Add a touch of elegance to your garden with alliums, known for their unique spherical flower heads.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Iris",
+                        Description = "Explore the beauty of iris flowers, available in a wide range of colors, to enhance your garden's appeal.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Amaryllis",
+                        Description = "Cultivate stunning amaryllis bulbs, known for their large, striking blooms, as a centerpiece in your garden.",
+                        Url = "/shop"
+                    },
+                    new MegaMenuItem
+                    {
+                        Title = "Muscari",
+                        Description = "Create a charming atmosphere with muscari flowers, also called grape hyacinths, for a unique garden touch.",
+                        Url = "/shop"
+                    }
+                }
+            },
+            new MegaMenu
+            {
+                Name = "seeds",
+                Items = new List<MegaMenuItem>()
+            },
+            new MegaMenu
+            {
+                Name = "materials",
+                Items = new List<MegaMenuItem>()
+            },
+            new MegaMenu
+            {
+                Name = "tools",
+                Items = new List<MegaMenuItem>()
+            }
+        };
+
+    private void CloseMegaMenu()
+    {
+        ActiveMegaMenu = null;
+        StateHasChanged();
+    } 
+    
+    private void ToggleMegaMenu(string name) {
+        var menu = AvailableMegaMenus.Where(x => x.Name == name).FirstOrDefault();
+
+        if (menu is null || ActiveMegaMenu?.Name == menu?.Name || menu?.Items.Count == 0)
+        {
+            ActiveMegaMenu = null;
+            return;
+        }
+
+        ActiveMegaMenu = menu;
+        StateHasChanged();
+    }
+
+}
